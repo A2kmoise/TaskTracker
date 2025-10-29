@@ -1,7 +1,12 @@
 import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
+import com.google.gson.reflect.TypeToken;
 
 class Task{
     private int id;
@@ -49,7 +54,29 @@ class TaskDb{
         this.file = file;
         load();
     }
-private void load(){}
+private void load(){
+        if (!file.exists()){
+            tasks = new ArrayList<>();
+            nextId = 1;
+            return;
+        }
+
+        try(Reader r = new FileReader(file)){
+            tasks = gson.fromJson(r, new TypeToken<>(){}.getType());
+            if (tasks == null) tasks = new ArrayList<>();
+
+            nextId = 1;
+            for (int i = 0; i < tasks.size() ; i++) {  // or use enhanced for (Task t : tasks) { nextId = Math.max(nextId, t.getId}
+                Task t = tasks.get(i);
+                nextId =  Math.max(nextId, i) +1;
+            }
+        } catch (IOException | JsonSyntaxException e) {
+            System.err.println("Failed to load data from JSON"+ e.getMessage());
+            tasks = new ArrayList<>();
+            nextId = 1;
+        }
+}
+
 
 }
 
