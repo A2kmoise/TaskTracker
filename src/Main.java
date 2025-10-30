@@ -1,7 +1,4 @@
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.Reader;
+import java.io.*;
 import java.util.*;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -48,7 +45,7 @@ class TaskDb{
     private final File file;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
     private  List<Task> tasks = new ArrayList<>();
-    private int nextId =1 ;
+    private int nextId =1;
 
     TaskDb(File file) {
         this.file = file;
@@ -77,6 +74,14 @@ private void load(){
         }
 }
 
+private void save() throws  OperationException {
+      try(Writer w = new FileWriter(file)){
+      gson.toJson(tasks, w);
+
+      } catch (Exception e) {
+     throw new OperationException("Task not save");
+      }
+}
 
 }
 
